@@ -4,11 +4,41 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: rgb(255, 255, 255);
   background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  opacity: 0.86;
+  height: 100vh;
+  background: #06295e url("assets/Background.jpg") no-repeat;
+
+  #root {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.container {
+  width: 90vw;
+  height: 90vh;
+  margin: auto;
+  display: flex;
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+  background: #041227ad;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+aside:first-child {
+  flex: 1;
 }
