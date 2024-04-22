@@ -1,12 +1,12 @@
 import Contacts from "./components/Contacts";
 import Details from "./components/Details";
-import Message from "./components/Message";
+import Chat from "./components/Chat";
 
 const App = () => {
   return (
     <main className="container">
       <Contacts />
-      <Message />
+      <Chat />
       <Details />
     </main>
   );

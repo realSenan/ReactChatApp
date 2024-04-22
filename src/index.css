@@ -1,7 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@200;300;400;500;600;700;800&display=swap");
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: "Mukta Malar", sans-serif;
   font-weight: 400;
+  font-style: normal;
+  line-height: 1.5;
 
   color-scheme: light dark;
   color: rgb(255, 255, 255);
@@ -11,11 +14,16 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --border-color: rgba(241, 241, 241, 0.096);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
   opacity: 0.86;
   height: 100vh;
   background: #06295e url("assets/Background.jpg") no-repeat;
@@ -28,17 +36,328 @@ body {
   }
 }
 
+.line-1-column {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
 .container {
   width: 90vw;
   height: 90vh;
   margin: auto;
   display: flex;
+  overflow: hidden;
   border-radius: 10px;
-  backdrop-filter: blur(4px);
   background: #041227ad;
+  backdrop-filter: blur(4px);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-aside:first-child {
-  flex: 1;
+.contact,
+.details {
+  flex: 0.7;
+  height: 100%;
+}
+
+.contact {
+  padding: 20px 10px;
+
+  .control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 100%;
+      }
+    }
+
+    .icons {
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+  .search {
+    gap: 10px;
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+    align-items: center;
+
+    .search-wrapper {
+      flex: 1;
+      height: 30px;
+      border-radius: 5px;
+      background: #365a7775;
+
+      display: flex;
+      align-items: center;
+      padding: 0 5px;
+      gap: 10px;
+    }
+
+    input {
+      flex: 1;
+      outline: none;
+      border: none;
+      background: transparent;
+    }
+
+    .add-contact {
+      display: grid;
+      width: 30px;
+      height: 30px;
+
+      border-radius: 100%;
+      place-content: center;
+      background: #365a7775;
+
+      outline: none;
+      border: none;
+      cursor: pointer;
+      transition: 100ms;
+
+      &:active {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  .user-wrapper {
+    margin-top: 20px;
+
+    .user-left-prev {
+      gap: 15px;
+      display: flex;
+      padding: 15px 0;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+
+      img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 100%;
+      }
+
+      h2 {
+        font-size: 19px;
+      }
+
+      h3 {
+        font-size: 14px;
+        color: #fffefec0;
+      }
+    }
+  }
+}
+
+.chat {
+  flex: 2.4;
+  border-right: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+
+  header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    figure {
+      display: flex;
+      gap: 15px;
+
+      img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 100%;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: rgb(190, 190, 190);
+      }
+    }
+
+    .icons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+  }
+
+  .messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    }
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      background-color: #203c66;
+      border-radius: 20px;
+    }
+
+    .message {
+      .text-wrapper {
+        display: flex;
+        gap: 15px;
+      }
+
+      .time {
+        font-size: 0.875rem;
+        margin-left: 5px;
+        margin-top: 5px;
+      }
+
+      .text {
+        width: 50%;
+        background: #2b3b4e;
+        padding: 10px;
+        border-radius: 10px;
+      }
+
+      #profile {
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+      }
+
+      .seen {
+        display: none;
+      }
+
+      &:has(.own) {
+        .text {
+          background-color: #3762cee3;
+          margin-left: auto;
+        }
+        .time {
+          text-align: right;
+        }
+
+        .seen {
+          display: block;
+          text-align: right;
+          height: 17px;
+
+          svg {
+            transition: 300ms;
+          }
+
+          svg:nth-child(1) {
+            margin-right: -10px;
+          }
+        }
+      }
+
+      &:not(:last-child) {
+        margin-bottom: 20px;
+      }
+    }
+  }
+
+  .type-wrapper {
+    border-top: 1px solid var(--border-color);
+    flex: 0;
+    gap: 14px;
+    display: flex;
+    padding: 20px;
+    align-items: center;
+
+    #msg-input {
+      flex: 1;
+      padding: 15px;
+      height: 50px;
+      font-size: 1rem;
+      outline: none;
+      border-radius: 5px;
+      border: none;
+      background: #253143;
+      font-family: "Mukta Malar", sans-serif;
+    }
+
+    .icon-pick {
+      font-family: "Mukta Malar", sans-serif;
+      background: transparent;
+      position: relative;
+      border: none;
+      cursor: pointer;
+
+      display: grid;
+      place-content: center;
+
+      .picker {
+        position: absolute;
+        bottom: 50px;
+        left: 0px;
+      }
+    }
+
+    .icon-send-message {
+      background: #4e83fa;
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-family: "Mukta Malar", sans-serif;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+.details {
+  figure {
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+
+    #profile {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    h3 {
+      text-align: center;
+      font-weight: 500;
+      font-size: 17px;
+    }
+  }
 }
