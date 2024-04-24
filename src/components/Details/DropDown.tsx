@@ -1,0 +1,34 @@
+import { IoChevronDown } from "react-icons/io5";
+import DisplayContainer from "../containers/DisplayContainer";
+import React, { ReactNode } from "react";
+
+interface Props {
+  id: string;
+  text: string;
+  isActive: boolean;
+  children?: ReactNode;
+  changeActive: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+}
+
+const DropDown: React.FC<Props> = ({
+  id,
+  text,
+  isActive,
+  children,
+  changeActive,
+}) => {
+  
+  return (
+    <div>
+      <div className="label-dropdown" id={id} onClick={changeActive}>
+        {text}
+        <div className={`icon ${isActive ? "active" : ""}`}>
+          <IoChevronDown size={16} />
+        </div>
+      </div>
+      <DisplayContainer isActive={isActive}>{children}</DisplayContainer>
+    </div>
+  );
+};
+
+export default DropDown;
