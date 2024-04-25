@@ -399,7 +399,7 @@ body {
   section {
     padding: 20px;
 
-    &.dropdown-container{
+    &.dropdown-container {
       padding-bottom: 0px;
     }
 
@@ -473,23 +473,82 @@ body {
 
     &.detail-control {
       padding-top: 0px;
-      
+
       button {
         border: none;
         outline: none;
         border-radius: 6px;
         width: 100%;
+        cursor: pointer;
       }
+
       .block {
-        background: #fb2c07b4;
+        background: #cc1717c9;
         height: 50px;
         font-weight: 700;
         margin-bottom: 2vh;
       }
-      .logout{
+
+      .logout {
         background: #1354aa;
-        height: 35px;
+        height: 38px;
       }
+    }
+  }
+}
+
+.auth-wrapper {
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  form {
+    margin:  auto;
+  }
+
+  .seperator {
+    width: 3px;
+    height: 90%;
+    background: var(--border-color);
+    border-radius: 20px;
+  }
+
+  .login,
+  .register {
+    width: 100%;
+  }
+
+  input {
+    display: block;
+    height: 45px;
+    outline: none;
+    border: none;
+    background: #3f7f9c8c;
+    border-radius: 10px;
+
+    &:not(&:last-child) {
+      margin-bottom: 20px;
+    }
+  }
+
+  input[name="profile"] {
+    display: none;
+  }
+
+  label#profile {
+    gap: 5px;
+    display: flex;
+    align-items: end;
+
+    span {
+      position: relative;
+      top: -7px;
+    }
+
+    img {
+      width: 90px;
     }
   }
 }
