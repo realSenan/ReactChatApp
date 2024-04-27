@@ -6,8 +6,14 @@ import { HiPlus } from "react-icons/hi";
 import { useState } from "react";
 import { MdOutlineRemove } from "react-icons/md";
 import User from "./User";
+import FindUser from "./UserModal/FindUser";
+
 const Contacts = () => {
   const [isAdd, setIsAdd] = useState(false);
+
+  const addHandler = () => {
+    setIsAdd((prev) => !prev);
+  };
 
   return (
     <aside className="contact">
@@ -33,10 +39,7 @@ const Contacts = () => {
           <input type="text" name="" id="search-user" />
         </label>
 
-        <button
-          className="add-contact"
-          onClick={() => setIsAdd((prev) => !prev)}
-        >
+        <button className="add-contact" onClick={addHandler}>
           {isAdd ? <MdOutlineRemove size={22} /> : <HiPlus size={20} />}
         </button>
       </div>
@@ -46,6 +49,8 @@ const Contacts = () => {
         <User />
         <User />
       </div>
+
+      {isAdd ? <FindUser close={addHandler} /> : null}
     </aside>
   );
 };
