@@ -541,6 +541,10 @@ body {
     &:not(&:last-child) {
       margin-bottom: 20px;
     }
+
+    &:disabled {
+      opacity: 0.8;
+    }
   }
 
   input[name="profile"] {
