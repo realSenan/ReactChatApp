@@ -1,15 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 import { login } from "./Thunk/Auth";
 
 interface AuthTypes {
-  currentUser: boolean | null;
+  currentUser: null | undefined | object;
   isLoading: boolean | null;
 }
 
 const initialState: AuthTypes = {
-  currentUser: false,
-  isLoading: false,
+  currentUser: null,
+  isLoading: true,
 };
 
 const authSlice = createSlice({
@@ -24,6 +23,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         console.log(action.payload);
         state.isLoading = false;
+        state.currentUser = action.payload;
       })
       .addCase(login.rejected, (state) => {
         state.isLoading = false;

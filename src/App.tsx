@@ -9,17 +9,26 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { login } from "./redux/Thunk/Auth";
 import { useSelector } from "react-redux";
+import { store } from "./redux/store";
+import Loading from "./layout/Loading";
+
+interface AuthState {
+  currentUser: string | null | object;
+}
 
 const App = () => {
-  const { currentUser } = useSelector(({ auth }) => auth);
+  const { currentUser }: AuthState = useSelector(
+    ({ auth }: { auth: AuthState }) => auth
+  );
 
-  console.log(currentUser);
+  const { isLoading }: { isLoading: boolean } = useSelector(
+    ({ auth }: { auth: { isLoading: boolean } }) => auth
+  );
 
   useEffect(() => {
     const onSub = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user);
-        login(user?.uid);
+        store.dispatch(login(user?.uid));
       }
     });
 
@@ -30,7 +39,9 @@ const App = () => {
 
   return (
     <main className="container">
-      {currentUser ? (
+      {isLoading ? (
+        <Loading />
+      ) : currentUser ? (
         <>
           <Contacts />
           <Chat />

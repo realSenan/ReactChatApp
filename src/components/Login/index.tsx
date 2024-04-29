@@ -8,12 +8,8 @@ import {
 import { auth, db } from "../../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import upload from "../../lib/upload";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/Thunk/Auth";
 
 const Login = () => {
-  const dispatch = useDispatch();
-
   const [profile, setProfile] = useState({
     file: {} as File,
     url: "",
@@ -45,7 +41,6 @@ const Login = () => {
         password as string
       );
 
-      dispatch(login("BuS6NJuZACRNNj3ZaDAvjb8ljIf2"));
       toast.success("Login successfly");
     } catch (err) {
       if (err instanceof Error) {
