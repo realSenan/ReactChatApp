@@ -9,9 +9,14 @@ import { auth, db } from "../../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import upload from "../../lib/upload";
 
+interface ProfileState {
+  file: File | null;
+  url: string;
+}
+
 const Login = () => {
-  const [profile, setProfile] = useState({
-    file: {} as File,
+  const [profile, setProfile] = useState<ProfileState>({
+    file: null,
     url: "",
   });
 
@@ -54,11 +59,11 @@ const Login = () => {
 
   const registerHandler = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     const formData = new FormData(e.target);
     const { username, password, email } = Object.fromEntries(formData);
 
     try {
-      setIsLoading(true);
       const res = await createUserWithEmailAndPassword(
         auth,
         email as string,
@@ -81,8 +86,8 @@ const Login = () => {
 
       toast.success("Account created! You can login now!");
     } catch (error) {
-      console.error(error);
       if (error instanceof Error) {
+        console.error(error.message);
         toast.error(error.message);
       }
     } finally {

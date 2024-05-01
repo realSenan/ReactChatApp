@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import DropDown from "./DropDown";
 import Photos from "./Photos";
+import { signOut } from "firebase/auth";
+import { auth } from "../../lib/firebase";
+import { useDispatch } from "react-redux";
+import { logOut } from "../../redux/authSlice";
+import { toast } from "react-toastify";
+import user from "../../assets/user.png";
 
 interface State {
   chat: boolean;
@@ -10,6 +16,7 @@ interface State {
 }
 
 const Details = () => {
+  const dispatch = useDispatch();
   const [state, setState] = useState<State>({
     chat: false,
     privacy: false,
@@ -25,13 +32,20 @@ const Details = () => {
     }));
   };
 
+  const logOutHandler = () => {
+    signOut(auth).then(() => {
+      dispatch(logOut());
+      toast.success("Logout success!");
+    });
+  };
+
   return (
     <aside className="details">
       <div>
         <figure className="sidebar-profile">
           <img
             id="profile"
-            src="https://img.freepik.com/free-photo/medium-shot-anime-woman-hugging-cat_23-2150970701.jpg?t=st=1713690312~exp=1713693912~hmac=88027b88800dadfbce6a64fd90fd4eb35d488fccde34889e93ca9ebb40fa5392&w=996"
+            src={user}
             alt=""
           />
 
@@ -61,8 +75,8 @@ const Details = () => {
             changeActive={clickHandler}
           >
             {/* Something else  */}
-            {Array.from({ length: 6 }).map(() => (
-              <Photos />
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Photos key={i} />
             ))}
           </DropDown>
 
@@ -77,7 +91,9 @@ const Details = () => {
 
       <section className="detail-control">
         <button className="block">Block user</button>
-        <button className="logout">Logout</button>
+        <button onClick={logOutHandler} className="logout">
+          Logout
+        </button>
       </section>
     </aside>
   );

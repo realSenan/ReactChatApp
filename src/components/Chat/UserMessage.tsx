@@ -1,5 +1,7 @@
 import React from "react";
 import { IoCheckmarkSharp } from "react-icons/io5";
+import user from "../../assets/user.png";
+
 interface Props {
   own?: boolean;
 }
@@ -11,7 +13,7 @@ const UserMessage: React.FC<Props> = ({ own }) => {
         {!own ? (
           <img
             id="profile"
-            src="https://img.freepik.com/free-photo/medium-shot-anime-woman-hugging-cat_23-2150970701.jpg?t=st=1713690312~exp=1713693912~hmac=88027b88800dadfbce6a64fd90fd4eb35d488fccde34889e93ca9ebb40fa5392&w=996"
+            src={user}
           />
         ) : null}
 

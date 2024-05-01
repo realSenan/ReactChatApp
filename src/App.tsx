@@ -20,6 +20,7 @@ const App = () => {
   const { currentUser }: AuthState = useSelector(
     ({ auth }: { auth: AuthState }) => auth
   );
+  console.log(currentUser)
 
   const { isLoading }: { isLoading: boolean } = useSelector(
     ({ auth }: { auth: { isLoading: boolean } }) => auth
@@ -27,9 +28,7 @@ const App = () => {
 
   useEffect(() => {
     const onSub = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        store.dispatch(login(user?.uid));
-      }
+      store.dispatch(login(user?.uid));
     });
 
     return () => {

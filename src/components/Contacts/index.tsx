@@ -7,6 +7,9 @@ import { useState } from "react";
 import { MdOutlineRemove } from "react-icons/md";
 import User from "./User";
 import FindUser from "./UserModal/FindUser";
+import { useSelector } from "react-redux";
+import { CurrentUserType } from "../../redux/authSlice";
+import user from "../../assets/user.png";
 
 const Contacts = () => {
   const [isAdd, setIsAdd] = useState(false);
@@ -15,15 +18,16 @@ const Contacts = () => {
     setIsAdd((prev) => !prev);
   };
 
+  const { currentUser }: { currentUser: CurrentUserType } = useSelector(
+    (state: { auth: { currentUser: CurrentUserType } }) => state.auth
+  );
+
   return (
     <aside className="contact">
       <div className="control">
         <div className="user">
-          <img
-            src="https://img.freepik.com/free-photo/medium-shot-anime-woman-hugging-cat_23-2150970701.jpg?t=st=1713690312~exp=1713693912~hmac=88027b88800dadfbce6a64fd90fd4eb35d488fccde34889e93ca9ebb40fa5392&w=996"
-            alt=""
-          />
-          <h2 className="line-1-column">Ateist Kedicik</h2>
+          <img src={currentUser.avatar || user} alt="user" />
+          <h2 className="line-1-column">{currentUser.username}</h2>
         </div>
 
         <div className="icons">

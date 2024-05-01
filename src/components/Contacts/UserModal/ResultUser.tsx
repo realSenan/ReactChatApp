@@ -1,8 +1,11 @@
+import user from "../../../assets/user.png";
+
+
 const ResultUser = () => {
   return (
     <figure className="result-user">
       <img
-        src="http://images2.fanpop.com/image/photos/13400000/Cat-cats-13494223-2304-1728.jpg"
+        src={user}
         alt=""
       />
 
