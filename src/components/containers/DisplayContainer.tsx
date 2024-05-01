@@ -15,7 +15,7 @@ const DisplayContainer: React.FC<Props> = ({
     <div
       className={`display-container ${isActive ? "active" : ""} ${className}`}
     >
-      <div id="hidden">{children}</div>
+      <div id="hidden">{children ? children : null}</div>
     </div>
   );
 };
