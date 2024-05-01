@@ -1,6 +1,6 @@
 import { IoChevronDown } from "react-icons/io5";
-import DisplayContainer from "../Containers/DisplayContainer";
 import React, { ReactNode } from "react";
+import DisplayContainer from "../Containers/DisplayContainer";
 
 interface Props {
   id: string;
