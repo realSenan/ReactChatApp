@@ -43,11 +43,7 @@ const Details = () => {
     <aside className="details">
       <div>
         <figure className="sidebar-profile">
-          <img
-            id="profile"
-            src={user}
-            alt=""
-          />
+          <img id="profile" src={user} alt="" />
 
           <figcaption>
             <h2>Cilli Balam Elya</h2>
