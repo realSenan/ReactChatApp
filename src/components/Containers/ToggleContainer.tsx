@@ -3,10 +3,10 @@ import React, { ReactNode } from "react";
 interface Props {
   children?: ReactNode;
   isActive: boolean;
-  className?: string | undefined | null;
+  className?: string;
 }
 
-const DisplayContainer: React.FC<Props> = ({
+const ToggleContainer: React.FC<Props> = ({
   className = "",
   isActive,
   children,
@@ -20,4 +20,4 @@ const DisplayContainer: React.FC<Props> = ({
   );
 };
 
-export default DisplayContainer;
+export default ToggleContainer;
