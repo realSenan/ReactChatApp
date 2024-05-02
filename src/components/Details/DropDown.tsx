@@ -1,6 +1,6 @@
 import { IoChevronDown } from "react-icons/io5";
 import React, { ReactNode } from "react";
-// import DisplayContainer from "../Containers/DisplayContainer.tsx";
+import DisplayContainer from "../Containers/DisplayContainer";
 
 interface Props {
   id: string;
@@ -14,7 +14,7 @@ const DropDown: React.FC<Props> = ({
   id,
   text,
   isActive,
-  // children,
+  children,
   changeActive,
 }) => {
   return (
@@ -27,7 +27,7 @@ const DropDown: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* <DisplayContainer isActive={isActive}>{children}</DisplayContainer> */}
+      <DisplayContainer isActive={isActive}>{children ? children : null}</DisplayContainer>
     </div>
   );
 };
