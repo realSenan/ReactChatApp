@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 interface Props {
   children?: ReactNode;
   isActive: boolean;
-  className?: string | undefined;
+  className?: string | undefined | null;
 }
 
 const DisplayContainer: React.FC<Props> = ({
