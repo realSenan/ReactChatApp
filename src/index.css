@@ -87,7 +87,7 @@ body {
 
 .contact,
 .details {
-  flex: 0.7;
+  flex: 1;
   height: 100%;
 }
 
@@ -97,6 +97,7 @@ body {
   .control {
     display: flex;
     align-items: center;
+    gap: 2px;
     justify-content: space-between;
 
     .user {
@@ -105,7 +106,7 @@ body {
       gap: 10px;
 
       img {
-        width: 50px;
+        min-width: 50px;
         height: 50px;
         object-fit: cover;
         border-radius: 100%;
@@ -269,7 +270,7 @@ body {
       }
 
       .text {
-        width: 50%;
+        /* width: 50%; */
         background: #2b3b4e;
         padding: 10px;
         border-radius: 10px;
@@ -287,9 +288,15 @@ body {
       }
 
       &:has(.own) {
+        .text-main {
+          margin-left: auto;
+        }
+
         .text {
           background-color: #3762cee3;
-          margin-left: auto;
+          display: flex;
+          align-items: center;
+          gap: 4px;
         }
         .time {
           text-align: right;
@@ -367,6 +374,7 @@ body {
 .details {
   gap: 10px;
   display: flex;
+  max-width: 320px;
   flex-direction: column;
   justify-content: space-between;
 
@@ -398,7 +406,11 @@ body {
   }
 
   section {
-    padding: 20px;
+    padding: 20px 0;
+
+    .drop-down { 
+      /* padding: 0 20px; */
+    }
 
     &.dropdown-container {
       padding-bottom: 0px;
@@ -409,6 +421,7 @@ body {
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
+      padding: 0 20px;
 
       &:not(:last-child) {
         margin-bottom: 15px;
@@ -434,11 +447,13 @@ body {
       margin-bottom: 15px;
     }
 
+
     .photo-items-container {
       .photo-item {
         gap: 15px;
         display: flex;
         flex-direction: row;
+        padding: 0 12px 0px 20px;
 
         img {
           width: 30px;

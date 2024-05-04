@@ -11,19 +11,24 @@ import { login } from "./redux/Thunk/Auth";
 import { useSelector } from "react-redux";
 import { store } from "./redux/store";
 import Loading from "./layout/Loading";
+import { chatStpreType } from "./redux/chatStore";
 
-interface AuthState {
+export interface AuthState {
   currentUser: string | null | object;
 }
 
 const App = () => {
-  const { currentUser }: AuthState = useSelector(
-    ({ auth }: { auth: AuthState }) => auth
+  const { currentUser } = useSelector(
+    ({ auth }: { auth: { currentUser: AuthState } }) => auth
   );
-  console.log(currentUser)
+  console.log(currentUser);
 
-  const { isLoading }: { isLoading: boolean } = useSelector(
+  const { isLoading } = useSelector(
     ({ auth }: { auth: { isLoading: boolean } }) => auth
+  );
+
+  const chatStore = useSelector(
+    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
   );
 
   useEffect(() => {
@@ -43,8 +48,12 @@ const App = () => {
       ) : currentUser ? (
         <>
           <Contacts />
-          <Chat />
-          <Details />
+          {chatStore.chatId ? (
+            <>
+              <Chat />
+              <Details />
+            </>
+          ) : null}
         </>
       ) : (
         <Login />

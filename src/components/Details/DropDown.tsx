@@ -18,7 +18,7 @@ const DropDown: React.FC<Props> = ({
   changeActive,
 }) => {
   return (
-    <div>
+    <div className="drop-down">
       <div className="label-dropdown" id={id} onClick={changeActive}>
         {text}
 
