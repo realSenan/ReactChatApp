@@ -168,7 +168,7 @@ body {
   .user-wrapper {
     margin-top: 20px;
 
-    .seen{
+    .seen {
       background: #1163ce69;
       border-radius: 5px;
     }
@@ -263,6 +263,21 @@ body {
     }
 
     .message {
+      .img {
+        max-width: 250px;
+        min-height: 140px;
+        max-height: 200px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+
+        &.own {
+          display: block;
+          margin-left: auto;
+          margin-bottom: 5px;
+        }
+      }
+
       .text-wrapper {
         display: flex;
         gap: 15px;
@@ -275,7 +290,7 @@ body {
       }
 
       .text {
-        /* width: 50%; */
+        max-width: 350px;
         background: #2b3b4e;
         padding: 10px;
         border-radius: 10px;
@@ -300,8 +315,8 @@ body {
         .text {
           background-color: #3762cee3;
           display: flex;
-          align-items: center;
-          gap: 4px;
+          align-items: end;
+          gap: 5px;
         }
         .time {
           text-align: right;
@@ -311,6 +326,7 @@ body {
           display: block;
           text-align: right;
           height: 17px;
+          text-wrap: nowrap;
 
           svg {
             transition: 300ms;
@@ -336,16 +352,37 @@ body {
     padding: 20px;
     align-items: center;
 
-    #msg-input {
+    label {
+      cursor: pointer;
+      height: 21px;
+    }
+
+    .inp-wrapper {
       flex: 1;
-      padding: 15px;
-      height: 50px;
-      font-size: 1rem;
-      outline: none;
-      border-radius: 5px;
-      border: none;
-      background: #253143;
-      font-family: "Mukta Malar", sans-serif;
+      position: relative;
+
+      .img-prew-box {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translate(-20%, -50%);
+        width: 35px;
+        height: 35px;
+        border-radius: 5px;
+        object-fit: cover;
+      }
+
+      #msg-input {
+        width: 100%;
+        padding: 15px;
+        height: 50px;
+        font-size: 1rem;
+        outline: none;
+        border-radius: 5px;
+        border: none;
+        background: #253143;
+        font-family: "Mukta Malar", sans-serif;
+      }
     }
 
     .icon-pick {
@@ -447,7 +484,6 @@ body {
     .display-container.active {
       margin-bottom: 15px;
     }
-
 
     .photo-items-container {
       .photo-item {

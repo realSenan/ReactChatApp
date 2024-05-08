@@ -1,15 +1,15 @@
-import { FaMicrophone } from "react-icons/fa";
-import { IoMdCamera } from "react-icons/io";
 import { MdPhotoSizeSelectActual } from "react-icons/md";
 import { FaFaceSmileWink } from "react-icons/fa6";
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useSelector } from "react-redux";
 import { chatStpreType } from "../../redux/chatStore";
 import { CurrentUserType } from "../../redux/authSlice";
+import upload from "../../lib/upload";
+import { ProfileState } from "../Login";
 
 interface EmojiType {
   emoji: string;
@@ -19,6 +19,11 @@ const Message = () => {
   const [text, setText] = useState("");
   const [emoji, setEmoji] = useState(false);
   const picker = useRef<HTMLButtonElement | null>(null);
+
+  const [img, setImg] = useState<ProfileState>({
+    file: null,
+    url: "",
+  });
 
   const chatInfo = useSelector(
     ({ chatStore }: { chatStore: chatStpreType }) => chatStore
@@ -30,6 +35,16 @@ const Message = () => {
   const emojiHandler = (e: EmojiType) => {
     setText((prev) => prev + e.emoji);
     setEmoji(false);
+  };
+
+  const imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setImg({
+        file: files[0],
+        url: URL.createObjectURL(files[0]),
+      });
+    }
   };
 
   useEffect(() => {
@@ -48,15 +63,21 @@ const Message = () => {
 
   const handlerSubmit = async () => {
     if (text === "") return;
-    setText("");
+
+    let imgUrl: string | null = null;
 
     try {
+      if (img.file) {
+        imgUrl = (await upload(img.file)) as string | null;
+      }
+
       if (chatInfo.chatId) {
         await updateDoc(doc(db, "chats", chatInfo.chatId), {
           messages: arrayUnion({
             senderId: currentUser.id,
             text,
             createdAt: new Date(),
+            ...(imgUrl && { img: imgUrl }),
           }),
         });
 
@@ -74,7 +95,8 @@ const Message = () => {
               );
 
               userChatData.chats[chatIndex].lastMessage = text;
-              userChatData.chats[chatIndex].isSeen = id == currentUser.id ? true : false;
+              userChatData.chats[chatIndex].isSeen =
+                id == currentUser.id ? true : false;
               userChatData.chats[chatIndex].updatedAt = Date.now();
 
               await updateDoc(usercChatRef, {
@@ -90,22 +112,39 @@ const Message = () => {
         toast.error(error.message);
       }
     }
+
+    setImg({
+      file: null,
+      url: "",
+    });
+    setText("");
   };
 
   return (
     <div className="type-wrapper">
-      <MdPhotoSizeSelectActual size={22} />
-      <IoMdCamera size={22} />
-      <FaMicrophone size={22} />
+      <label htmlFor="img">
+        <MdPhotoSizeSelectActual size={22} />
+        <input
+          type="file"
+          id="img"
+          style={{ display: "none" }}
+          onChange={imageHandler}
+        />
+      </label>
 
-      <input
-        onChange={(e) => setText(e.target.value)}
-        type="text"
-        value={text}
-        id="msg-input"
-        placeholder="Type a message..."
-        onKeyDown={(e) => (e.key == "Enter" ? handlerSubmit() : () => {})}
-      />
+      {/* <FaMicrophone size={22} /> */}
+
+      <div className="inp-wrapper">
+        <input
+          onChange={(e) => setText(e.target.value)}
+          type="text"
+          value={text}
+          id="msg-input"
+          placeholder="Type a message..."
+          onKeyDown={(e) => (e.key == "Enter" ? handlerSubmit() : () => {})}
+        />
+        {img.file && <img src={img.url} alt="" className="img-prew-box" />}
+      </div>
 
       <button className="icon-pick" ref={picker}>
         <FaFaceSmileWink size={22} onClick={() => setEmoji((prev) => !prev)} />

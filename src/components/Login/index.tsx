@@ -9,7 +9,7 @@ import { auth, db } from "../../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import upload from "../../lib/upload";
 
-interface ProfileState {
+export interface ProfileState {
   file: File | null;
   url: string;
 }

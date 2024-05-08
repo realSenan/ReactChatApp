@@ -23,6 +23,12 @@ const UserMessage: React.FC<Props> = ({ chat }) => {
 
   return (
     <div className="message">
+      {chat.img && (
+        <img
+          src={chat.img}
+          className={`img ${currentUser.id == chat.senderId ? "own" : ""}`}
+        />
+      )}
       <div className="text-wrapper">
         {currentUser.id != chat.senderId ? (
           <img id="profile" src={chatInfo.user?.avatar || userAvatar} />

@@ -49,8 +49,9 @@ const User: React.FC<Props> = ({ user, chatData, index }) => {
     chatData[chatIndex].chatList[index].isSeen = true;
 
     const userChatRef = doc(db, "userchats", currentUser.id);
-    const newData = onlyChatData.flatMap((innerArray) =>
-      Object.values(innerArray)
+
+    const newData = Object.values(user.chatList).flatMap(
+      (innerArray) => innerArray
     );
 
     try {

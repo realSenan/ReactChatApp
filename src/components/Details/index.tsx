@@ -3,10 +3,11 @@ import DropDown from "./DropDown";
 import Photos from "./Photos";
 import { signOut } from "firebase/auth";
 import { auth } from "../../lib/firebase";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../../redux/authSlice";
 import { toast } from "react-toastify";
-import user from "../../assets/user.png";
+import avatar from "../../assets/user.png";
+import { chatStpreType } from "../../redux/chatStore";
 
 interface State {
   chat: boolean;
@@ -39,14 +40,20 @@ const Details = () => {
     });
   };
 
+  const { user } = useSelector(
+    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
+  );
+
+  console.log(user);
+
   return (
     <aside className="details">
       <div>
         <figure className="sidebar-profile">
-          <img id="profile" src={user} alt="" />
+          <img id="profile" src={user?.avatar || avatar} alt="" />
 
           <figcaption>
-            <h2>Cilli Balam Elya</h2>
+            <h2>{user?.username}</h2>
             <h3>Yatiram</h3>
           </figcaption>
         </figure>

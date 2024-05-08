@@ -17,7 +17,9 @@ interface Props {
 }
 
 const FindUser: React.FC<Props> = ({ close }) => {
-  const [searchResultUser, setSearchResultUser] = useState<CurrentUserType>();
+  const [searchResultUser, setSearchResultUser] = useState<
+    CurrentUserType[] | null
+  >();
   const stopClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
   };
@@ -34,7 +36,11 @@ const FindUser: React.FC<Props> = ({ close }) => {
         await getDocs(q);
 
       if (!querySnapShot.empty) {
-        setSearchResultUser(querySnapShot.docs[0]?.data() as CurrentUserType);
+        const data: CurrentUserType[] = [];
+        querySnapShot.docs.forEach((x) =>
+          data.push(x.data() as CurrentUserType)
+        );
+        setSearchResultUser(data);
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -53,14 +59,15 @@ const FindUser: React.FC<Props> = ({ close }) => {
         </form>
 
         <section className="search-result">
-          {searchResultUser ? (
+          {searchResultUser?.map((usr, i) => (
             <ResultUser
+              key={i}
               close={close}
-              userId={searchResultUser.id}
-              avatar={searchResultUser.avatar}
-              name={searchResultUser.username}
+              userId={usr.id}
+              avatar={usr.avatar}
+              name={usr.username}
             />
-          ) : null}
+          ))}
         </section>
       </div>
     </div>

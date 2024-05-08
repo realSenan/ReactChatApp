@@ -13,6 +13,7 @@ interface FirestoreTimestamp {
 export interface Message {
   createdAt: FirestoreTimestamp;
   senderId: string;
+  img: string,
   text: string;
 }
 
@@ -24,8 +25,6 @@ export interface MessageType {
 const ChatArea = () => {
   const scrollBottom = useRef<HTMLDivElement>(null);
   const [chat, setChat] = useState<MessageType | undefined | DocumentData>();
-
-  // console.log(chat);
 
   const chatStore = useSelector(
     ({ chatStore }: { chatStore: chatStpreType }) => chatStore
@@ -49,8 +48,8 @@ const ChatArea = () => {
 
   return (
     <div className="messages">
-      {chat?.messages?.map((message: Message,i : number) => (
-        <UserMessage chat={message} key={i}/>
+      {chat?.messages?.map((message: Message, i: number) => (
+        <UserMessage chat={message} key={i} />
       ))}
 
       <div ref={scrollBottom} />
