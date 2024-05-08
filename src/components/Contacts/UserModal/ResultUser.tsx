@@ -20,7 +20,7 @@ interface Props {
   close: () => void;
 }
 
-const ResultUser: React.FC<Props> = ({ avatar, name, userId }) => {
+const ResultUser: React.FC<Props> = ({ avatar, name, userId,close }) => {
   const { currentUser } = useSelector(
     ({ auth }: { auth: { currentUser: CurrentUserType } }) => auth
   );
@@ -55,7 +55,7 @@ const ResultUser: React.FC<Props> = ({ avatar, name, userId }) => {
         }),
       });
 
-      console.log(newChatRef.id);
+      // console.log(newChatRef.id);
       close();
     } catch (error) {
       if (error instanceof Error) {

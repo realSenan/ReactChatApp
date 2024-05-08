@@ -21,7 +21,6 @@ const App = () => {
   const { currentUser } = useSelector(
     ({ auth }: { auth: { currentUser: AuthState } }) => auth
   );
-  console.log(currentUser);
 
   const { isLoading } = useSelector(
     ({ auth }: { auth: { isLoading: boolean } }) => auth

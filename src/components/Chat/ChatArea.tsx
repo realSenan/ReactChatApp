@@ -25,7 +25,7 @@ const ChatArea = () => {
   const scrollBottom = useRef<HTMLDivElement>(null);
   const [chat, setChat] = useState<MessageType | undefined | DocumentData>();
 
-  console.log(chat);
+  // console.log(chat);
 
   const chatStore = useSelector(
     ({ chatStore }: { chatStore: chatStpreType }) => chatStore

@@ -4,23 +4,28 @@ import userAvatar from "../../assets/user.png";
 import { Message } from "./ChatArea";
 import { useSelector } from "react-redux";
 import { CurrentUserType } from "../../redux/authSlice";
+import { chatStpreType } from "../../redux/chatStore";
 
 interface Props {
   chat: Message;
 }
 
 const UserMessage: React.FC<Props> = ({ chat }) => {
-  console.log(chat);
+  // console.log(chat);
 
   const { currentUser } = useSelector(
     ({ auth }: { auth: { currentUser: CurrentUserType } }) => auth
+  );
+
+  const chatInfo = useSelector(
+    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
   );
 
   return (
     <div className="message">
       <div className="text-wrapper">
         {currentUser.id != chat.senderId ? (
-          <img id="profile" src={userAvatar} />
+          <img id="profile" src={chatInfo.user?.avatar || userAvatar} />
         ) : null}
         <div className="text-main">
           <div
@@ -28,8 +33,8 @@ const UserMessage: React.FC<Props> = ({ chat }) => {
           >
             {chat.text}
             <div className="seen">
-              <IoCheckmarkSharp size={15}/>
-              <IoCheckmarkSharp size={15}/>
+              <IoCheckmarkSharp size={15} />
+              <IoCheckmarkSharp size={15} />
             </div>
           </div>
           <div className="time">1 min ago</div>

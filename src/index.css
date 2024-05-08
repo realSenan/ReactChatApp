@@ -168,6 +168,11 @@ body {
   .user-wrapper {
     margin-top: 20px;
 
+    .seen{
+      background: #1163ce69;
+      border-radius: 5px;
+    }
+
     .user-left-prev {
       gap: 15px;
       display: flex;
@@ -407,10 +412,6 @@ body {
 
   section {
     padding: 20px 0;
-
-    .drop-down { 
-      /* padding: 0 20px; */
-    }
 
     &.dropdown-container {
       padding-bottom: 0px;

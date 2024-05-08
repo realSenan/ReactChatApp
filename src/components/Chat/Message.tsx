@@ -50,8 +50,6 @@ const Message = () => {
     if (text === "") return;
     setText("");
 
-    console.log(chatInfo)
-    
     try {
       if (chatInfo.chatId) {
         await updateDoc(doc(db, "chats", chatInfo.chatId), {
@@ -71,7 +69,6 @@ const Message = () => {
 
             if (userChatsSnapshot.exists()) {
               const userChatData = userChatsSnapshot.data();
-              console.log('ssssssssssssssssssssssssssss',userChatData.chats)
               const chatIndex = userChatData.chats.findIndex(
                 (c: chatStpreType) => c.chatId === chatInfo.chatId
               );
@@ -81,7 +78,7 @@ const Message = () => {
               userChatData.chats[chatIndex].updatedAt = Date.now();
 
               await updateDoc(usercChatRef, {
-                chats: userChatData,
+                chats: userChatData.chats,
               });
             }
           }

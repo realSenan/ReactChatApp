@@ -16,7 +16,7 @@ import User, { ChatDataType } from "./User";
 const Contacts = () => {
   const [isAdd, setIsAdd] = useState(false);
   const [chats, setChats] = useState<Array<ChatDataType>>([]);
- 
+
   const { currentUser }: { currentUser: CurrentUserType } = useSelector(
     (state: { auth: { currentUser: CurrentUserType } }) => state.auth
   );
@@ -32,7 +32,7 @@ const Contacts = () => {
           const userDocSnap = await getDoc(userDocRef);
           const user = userDocSnap.data();
 
-          return { chatList: { ...chatList }[0], user };
+          return { chatList: { ...chatList }, user };
         });
 
         const chatData = await Promise.all(promises);
@@ -78,8 +78,7 @@ const Contacts = () => {
 
       <div className="user-wrapper">
         {chats.map((user: ChatDataType, i: number) => (
-          console.log(user),
-          <User user={user} key={i} />
+          <User chatData={chats} user={user} key={i} index={i} />
         ))}
       </div>
 

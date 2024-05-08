@@ -10,8 +10,6 @@ const Header = () => {
     ({ chatStore }: { chatStore: { user: CurrentUserType } }) => chatStore
   );
 
-  console.log(user);
-
   return (
     <header>
       <figure>
