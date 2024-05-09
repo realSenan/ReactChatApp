@@ -22,21 +22,21 @@ const chatStore = createSlice({
     changeChat: (state, action) => {
       const { chatId, user, currentUser } = action.payload;
 
-      switch (true) {
-        case user.blocked.includes(currentUser?.id):
-          state.user = null;
-          state.isReciverBlocked = true;
-          break;
-        case currentUser?.blocked.includes(user.id):
-          state.user = user;
-          state.isReciverBlocked = true;
-          break;
-        default:
-          state.chatId = chatId;
-          state.user = user;
-          state.isCurrentUserBlocked = false;
-          state.isReciverBlocked = false;
-          break;
+      if (user.blocked.includes(currentUser?.id)) {
+        state.user = null;
+        state.chatId = chatId;
+        state.isCurrentUserBlocked = !state.isCurrentUserBlocked;
+        state.isReciverBlocked = false;
+      } else if (currentUser?.blocked.includes(user.id)) {
+        state.user = user;
+        state.chatId = chatId;
+        state.isCurrentUserBlocked = false;
+        state.isReciverBlocked = !state.isReciverBlocked;
+      } else {
+        state.user = user;
+        state.chatId = chatId;
+        state.isReciverBlocked = false;
+        state.isCurrentUserBlocked = false;
       }
     },
   },

@@ -13,10 +13,10 @@ const Header = () => {
   return (
     <header>
       <figure>
-        <img src={user.avatar || userAvatar} alt="" />
+        <img src={user?.avatar || userAvatar} alt="" />
 
         <figcaption>
-          <h2>{user.username}</h2>
+          <h2>{user?.username}</h2>
           <h3>Here is a status...</h3>
         </figcaption>
       </figure>

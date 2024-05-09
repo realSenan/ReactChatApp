@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import DropDown from "./DropDown";
 import Photos from "./Photos";
 import { signOut } from "firebase/auth";
-import { auth } from "../../lib/firebase";
+import { auth, db } from "../../lib/firebase";
 import { useDispatch, useSelector } from "react-redux";
-import { logOut } from "../../redux/authSlice";
+import { CurrentUserType, logOut } from "../../redux/authSlice";
 import { toast } from "react-toastify";
 import avatar from "../../assets/user.png";
-import { chatStpreType } from "../../redux/chatStore";
+import { changeChat, chatStpreType } from "../../redux/chatStore";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 
 interface State {
   chat: boolean;
@@ -25,6 +26,39 @@ const Details = () => {
     "shared-files": false,
   });
 
+  const chatStore = useSelector(
+    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
+  );
+
+  const { currentUser } = useSelector(
+    ({ auth }: { auth: { currentUser: CurrentUserType } }) => auth
+  );
+
+  const handleBlock = async () => {
+    if (!chatStore.user) return;
+    const userDocRef = doc(db, "users", currentUser.id);
+
+    try {
+      await updateDoc(userDocRef, {
+        blocked: chatStore.isReciverBlocked
+          ? arrayRemove(chatStore.user.id)
+          : arrayUnion(chatStore.user.id),
+      });
+      dispatch(
+        changeChat({
+          chatId: chatStore.chatId,
+          user: chatStore.user,
+          currentUser,
+        })
+      );//! not working block
+      console.log(chatStore)
+    } catch (er) {
+      if (er instanceof Error) {
+        toast.error(er.message);
+      }
+    }
+  };
+
   const clickHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const id = e.currentTarget.id;
     setState((prev) => ({
@@ -40,20 +74,14 @@ const Details = () => {
     });
   };
 
-  const { user } = useSelector(
-    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
-  );
-
-  console.log(user);
-
   return (
     <aside className="details">
       <div>
         <figure className="sidebar-profile">
-          <img id="profile" src={user?.avatar || avatar} alt="" />
+          <img id="profile" src={chatStore.user?.avatar || avatar} alt="" />
 
           <figcaption>
-            <h2>{user?.username}</h2>
+            <h2>{chatStore.user?.username}</h2>
             <h3>Yatiram</h3>
           </figcaption>
         </figure>
@@ -93,7 +121,13 @@ const Details = () => {
       </div>
 
       <section className="detail-control">
-        <button className="block">Block user</button>
+        <button className="block" onClick={handleBlock}>
+          {chatStore.isCurrentUserBlocked
+            ? "You are blocked"
+            : chatStore.isReciverBlocked
+            ? "User blocked"
+            : "Block user"}
+        </button>
         <button onClick={logOutHandler} className="logout">
           Logout
         </button>

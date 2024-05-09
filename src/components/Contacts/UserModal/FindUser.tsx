@@ -50,6 +50,7 @@ const FindUser: React.FC<Props> = ({ close }) => {
     }
   };
 
+
   return (
     <div onClick={close} className="find-user-modal">
       <div onClick={stopClick} className="inner-user-modal">

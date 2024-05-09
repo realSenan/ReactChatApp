@@ -49,13 +49,17 @@ const Contacts = () => {
   const addHandler = () => {
     setIsAdd((prev) => !prev);
   };
+  const [searchName, setSearchName] = useState("");
+  const filterChats = chats.filter((c) =>
+    c.user.username.toLowerCase().includes(searchName)
+  );
 
   return (
     <aside className="contact">
       <div className="control">
         <div className="user">
-          <img src={currentUser.avatar || user} alt="user" />
-          <h2 className="line-1-column">{currentUser.username}</h2>
+          <img src={currentUser?.avatar || user} alt="user" />
+          <h2 className="line-1-column">{currentUser?.username}</h2>
         </div>
 
         <div className="icons">
@@ -68,7 +72,11 @@ const Contacts = () => {
       <div className="search">
         <label htmlFor="search-user" className="search-wrapper">
           <IoMdSearch size={20} id="search-icon" />
-          <input type="text" name="" id="search-user" />
+          <input
+            type="text"
+            id="search-user"
+            onChange={(e) => setSearchName(e.target.value)}
+          />
         </label>
 
         <button className="add-contact" onClick={addHandler}>
@@ -77,7 +85,7 @@ const Contacts = () => {
       </div>
 
       <div className="user-wrapper">
-        {chats.map((user: ChatDataType, i: number) => (
+        {filterChats.map((user: ChatDataType, i: number) => (
           <User chatData={chats} user={user} key={i} index={i} />
         ))}
       </div>
