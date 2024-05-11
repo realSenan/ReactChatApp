@@ -3,16 +3,16 @@ import { HiMiniVideoCamera } from "react-icons/hi2";
 import { TbEdit } from "react-icons/tb";
 import { IoMdSearch } from "react-icons/io";
 import { HiPlus } from "react-icons/hi";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdOutlineRemove } from "react-icons/md";
 import FindUser from "./UserModal/FindUser";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CurrentUserType } from "../../redux/authSlice";
 import user from "../../assets/user.png";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import User, { ChatDataType } from "./User";
-import { chatStpreType } from "../../redux/chatStore";
+import { chatStpreType, closeContact } from "../../redux/chatStore";
 
 const Contacts = () => {
   const [isAdd, setIsAdd] = useState(false);
@@ -59,9 +59,20 @@ const Contacts = () => {
     ({ chatStore }: { chatStore: chatStpreType }) => chatStore
   );
 
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(closeContact());
+  }, [chatId, dispatch]);
+
   return (
     <aside
-      className={`contact  ${chatId ? (isContactClose ? "active" : "") : "isEmpty"}`}
+      ref={contactRef}
+      className={`contact ${
+        chatId ? (isContactClose ? "active" : "") : "isEmpty"
+      }`}
     >
       <div className="control">
         <div className="user">
