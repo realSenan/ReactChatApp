@@ -852,6 +852,11 @@ body {
   } */
 }
 @media (max-width: 925px) {
+  .container{
+    width: 99vw;
+    height: 99vh;
+  }
+  
   .contact {
     flex: 0 !important;
     min-width: 0px;
