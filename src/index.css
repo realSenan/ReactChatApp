@@ -860,6 +860,10 @@ body {
   }
 }
 @media (max-width: 925px) {
+  .icon-pick{
+    display: none;
+  }
+  
   .container {
     width: 100vw;
     height: 100vh;
