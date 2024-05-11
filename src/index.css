@@ -860,10 +860,17 @@ body {
   }
 }
 @media (max-width: 925px) {
-  .icon-pick{
+  .find-user-modal {
+    padding: 10px;
+    .inner-user-modal {
+      margin-top: -460px;
+    }
+  }
+
+  .icon-pick {
     display: none !important;
   }
-  
+
   .container {
     width: 100vw;
     height: 100vh;
@@ -896,7 +903,7 @@ body {
     flex-direction: column;
     justify-content: space-around;
     gap: 30px;
-    
+
     .seperator {
       display: none;
     }
