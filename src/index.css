@@ -858,14 +858,6 @@ body {
   .picker {
     left: -260px !important;
   }
-
-  /* .contact {
-    flex: 0;
-    min-width: 0px;
-    &.active {
-      flex: 1 !important;
-    }
-  } */
 }
 @media (max-width: 925px) {
   .container {
@@ -892,6 +884,17 @@ body {
       &.active {
         transform: rotate(-180deg);
       }
+    }
+  }
+
+  .auth-wrapper {
+    padding: 5px;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 30px;
+    
+    .seperator {
+      display: none;
     }
   }
 }

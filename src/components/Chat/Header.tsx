@@ -30,7 +30,7 @@ const Header = () => {
       <div className="icons">
         <BiSolidPhoneCall size={22} />
         <HiMiniVideoCamera size={22} />
-        <FaInfoCircle size={22} onClick={handleDetails}/>
+        <FaInfoCircle size={22} onClick={handleDetails} />
       </div>
     </header>
   );
