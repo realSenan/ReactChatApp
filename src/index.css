@@ -259,6 +259,7 @@ body {
       h3 {
         font-size: 14px;
         font-weight: 600;
+        text-wrap: nowrap;
         color: rgb(190, 190, 190);
       }
     }
@@ -836,9 +837,24 @@ body {
 }
 
 @media (max-width: 1025px) {
-  /* .details {
-    display: none;
-  } */
+  .details {
+    max-width: 0%;
+    position: absolute;
+    background: #14397e;
+    height: fit-content;
+    border-radius: 10px;
+    left: 50%;
+    transform: translate(-50%);
+    z-index: 10;
+    width: 100%;
+    bottom: -700px;
+
+    &.active {
+      max-width: 90%;
+      bottom: 10px;
+    }
+  }
+
   .picker {
     left: -260px !important;
   }
@@ -852,11 +868,12 @@ body {
   } */
 }
 @media (max-width: 925px) {
-  .container{
-    width: 99vw;
-    height: 99vh;
+  .container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
   }
-  
+
   .contact {
     flex: 0 !important;
     min-width: 0px;
