@@ -25,11 +25,10 @@
 
 body {
   opacity: 0.86;
-  height: 100vh;
   background: #06295e url("assets/Background.jpg") no-repeat;
 
   #root {
-    height: 100%;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
