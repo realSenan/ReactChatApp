@@ -861,7 +861,7 @@ body {
 }
 @media (max-width: 925px) {
   .icon-pick{
-    display: none;
+    display: none !important;
   }
   
   .container {
