@@ -12,6 +12,7 @@ import user from "../../assets/user.png";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import User, { ChatDataType } from "./User";
+import { chatStpreType } from "../../redux/chatStore";
 
 const Contacts = () => {
   const [isAdd, setIsAdd] = useState(false);
@@ -54,8 +55,14 @@ const Contacts = () => {
     c.user.username.toLowerCase().includes(searchName)
   );
 
+  const { isContactClose, chatId } = useSelector(
+    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
+  );
+
   return (
-    <aside className="contact">
+    <aside
+      className={`contact  ${chatId ? (isContactClose ? "active" : "") : "isEmpty"}`}
+    >
       <div className="control">
         <div className="user">
           <img src={currentUser?.avatar || user} alt="user" />

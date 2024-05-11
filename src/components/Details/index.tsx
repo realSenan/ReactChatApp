@@ -7,8 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { CurrentUserType, logOut } from "../../redux/authSlice";
 import { toast } from "react-toastify";
 import avatar from "../../assets/user.png";
-import { changeChat, chatStpreType } from "../../redux/chatStore";
+import {
+  changeBlock,
+  chatStpreType,
+  closeDetails,
+} from "../../redux/chatStore";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { RiEyeCloseFill } from "react-icons/ri";
 
 interface State {
   chat: boolean;
@@ -22,7 +27,7 @@ const Details = () => {
   const [state, setState] = useState<State>({
     chat: false,
     privacy: false,
-    "shared-photos": true,
+    "shared-photos": false,
     "shared-files": false,
   });
 
@@ -44,14 +49,7 @@ const Details = () => {
           ? arrayRemove(chatStore.user.id)
           : arrayUnion(chatStore.user.id),
       });
-      dispatch(
-        changeChat({
-          chatId: chatStore.chatId,
-          user: chatStore.user,
-          currentUser,
-        })
-      );//! not working block
-      console.log(chatStore)
+      dispatch(changeBlock());
     } catch (er) {
       if (er instanceof Error) {
         toast.error(er.message);
@@ -74,15 +72,27 @@ const Details = () => {
     });
   };
 
+  const { isDetailsClose } = useSelector(
+    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
+  );
+
+  const handleDetails = () => {
+    dispatch(closeDetails());
+  };
+
   return (
-    <aside className="details">
+    <aside className={`details ${isDetailsClose ? "active" : ""}`}>
+      <div className="close-icon" onClick={handleDetails}>
+        <RiEyeCloseFill size={20} />
+      </div>
+
       <div>
         <figure className="sidebar-profile">
           <img id="profile" src={chatStore.user?.avatar || avatar} alt="" />
 
           <figcaption>
             <h2>{chatStore.user?.username}</h2>
-            <h3>Yatiram</h3>
+            <h3>Here is a status...</h3>
           </figcaption>
         </figure>
 

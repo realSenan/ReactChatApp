@@ -2,13 +2,19 @@ import { BiSolidPhoneCall } from "react-icons/bi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
 import { FaInfoCircle } from "react-icons/fa";
 import userAvatar from "../../assets/user.png";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CurrentUserType } from "../../redux/authSlice";
+import { closeDetails } from "../../redux/chatStore";
 
 const Header = () => {
   const { user } = useSelector(
     ({ chatStore }: { chatStore: { user: CurrentUserType } }) => chatStore
   );
+  const dispatch = useDispatch();
+
+  const handleDetails = () => {
+    dispatch(closeDetails());
+  };
 
   return (
     <header>
@@ -24,7 +30,7 @@ const Header = () => {
       <div className="icons">
         <BiSolidPhoneCall size={22} />
         <HiMiniVideoCamera size={22} />
-        <FaInfoCircle size={22} />
+        <FaInfoCircle size={22} onClick={handleDetails}/>
       </div>
     </header>
   );

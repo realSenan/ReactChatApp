@@ -6,6 +6,8 @@ export interface chatStpreType {
   user: CurrentUserType | null;
   isCurrentUserBlocked: boolean;
   isReciverBlocked: boolean;
+  isContactClose: boolean;
+  isDetailsClose: boolean;
 }
 
 const initialState: chatStpreType = {
@@ -13,6 +15,8 @@ const initialState: chatStpreType = {
   user: null,
   isCurrentUserBlocked: false,
   isReciverBlocked: false,
+  isContactClose: false,
+  isDetailsClose: false,
 };
 
 const chatStore = createSlice({
@@ -39,8 +43,18 @@ const chatStore = createSlice({
         state.isCurrentUserBlocked = false;
       }
     },
+    changeBlock: (state) => {
+      state.isReciverBlocked = !state.isReciverBlocked;
+    },
+    closeContact: (state) => {
+      state.isContactClose = !state.isContactClose;
+    },
+    closeDetails: (state) => {
+      state.isDetailsClose = !state.isDetailsClose;
+    },
   },
 });
 
-export const { changeChat } = chatStore.actions;
+export const { changeChat, changeBlock, closeContact, closeDetails } =
+  chatStore.actions;
 export default chatStore.reducer;

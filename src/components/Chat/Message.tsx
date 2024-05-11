@@ -10,6 +10,7 @@ import { chatStpreType } from "../../redux/chatStore";
 import { CurrentUserType } from "../../redux/authSlice";
 import upload from "../../lib/upload";
 import { ProfileState } from "../Login";
+import { FaMicrophone } from "react-icons/fa";
 
 interface EmojiType {
   emoji: string;
@@ -34,7 +35,6 @@ const Message = () => {
 
   const emojiHandler = (e: EmojiType) => {
     setText((prev) => prev + e.emoji);
-    setEmoji(false);
   };
 
   const imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,8 +120,12 @@ const Message = () => {
     setText("");
   };
 
+  const { isReciverBlocked } = useSelector(
+    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
+  );
+
   return (
-    <div className="type-wrapper">
+    <div className={`type-wrapper  ${isReciverBlocked ? "disabled" : ""}`}>
       <label htmlFor="img">
         <MdPhotoSizeSelectActual size={22} />
         <input
@@ -132,7 +136,7 @@ const Message = () => {
         />
       </label>
 
-      {/* <FaMicrophone size={22} /> */}
+      <FaMicrophone size={22} />
 
       <div className="inp-wrapper">
         <input
@@ -140,6 +144,7 @@ const Message = () => {
           type="text"
           value={text}
           id="msg-input"
+          disabled={isReciverBlocked}
           placeholder="Type a message..."
           onKeyDown={(e) => (e.key == "Enter" ? handlerSubmit() : () => {})}
         />
