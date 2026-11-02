@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-import User from "../../assets/user.png";
+import { useState } from "react";
 import { toast } from "react-toastify";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth, db } from "../../lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
-import upload from "../../lib/upload";
+import { signInWithPopup } from "firebase/auth";
+import { auth, db, googleProvider } from "../../lib/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { FcGoogle } from "react-icons/fc";
+import { store } from "../../redux/store";
+import { ensureGlobalChatExists, login } from "../../redux/Thunk/Auth";
 
 export interface ProfileState {
   file: File | null;
@@ -15,76 +13,39 @@ export interface ProfileState {
 }
 
 const Login = () => {
-  const [profile, setProfile] = useState<ProfileState>({
-    file: null,
-    url: "",
-  });
-
   const [isLoading, setIsLoading] = useState(false);
 
-  const imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      setProfile({
-        file: files[0],
-        url: URL.createObjectURL(files[0]),
-      });
-    }
-  };
-
-  const loginHandler = async (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const googleLoginHandler = async () => {
     setIsLoading(true);
-
-    const formData = new FormData(e.target);
-    const { email, password } = Object.fromEntries(formData);
-
     try {
-      await signInWithEmailAndPassword(
-        auth,
-        email as string,
-        password as string
-      );
+      const res = await signInWithPopup(auth, googleProvider);
+      const user = res.user;
 
-      toast.success("Login successfly");
-    } catch (err) {
-      if (err instanceof Error) {
-        console.error(err);
-        toast.error(err.message);
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+        await setDoc(userDocRef, {
+          username:
+            user.displayName || user.email?.split("@")[0] || "User",
+          email: user.email || "",
+          id: user.uid,
+          avatar: user.photoURL || null,
+          gender: "unspecified",
+          blocked: [],
+          friends: [],
+          friendRequests: [],
+          sentRequests: [],
+        });
+
+        await setDoc(doc(db, "userchats", user.uid), {
+          chats: [],
+        });
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const registerHandler = async (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const formData = new FormData(e.target);
-    const { username, password, email } = Object.fromEntries(formData);
-
-    try {
-      const res = await createUserWithEmailAndPassword(
-        auth,
-        email as string,
-        password as string
-      );
-
-      const imgUrl = await upload(profile.file);
-
-      await setDoc(doc(db, "users", res.user.uid), {
-        username,
-        email,
-        id: res.user.uid,
-        avatar: imgUrl,
-        blocked: [],
-      });
-
-      await setDoc(doc(db, "userchats", res.user.uid), {
-        chats: [],
-      });
-
-      toast.success("Account created! You can login now!");
+      await ensureGlobalChatExists();
+      await store.dispatch(login(user.uid));
+      toast.success("Successfully signed in with Google!");
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
@@ -96,67 +57,27 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-wrapper">
-      <div className="login">
-        <h2>Welcome back,</h2>
+    <div className="auth-wrapper google-only">
+      <div className="login google-login-box">
+        <h2>Welcome</h2>
+        <p className="login-subtitle">
+          Sign in with your Google account to join the Global Chat and connect
+          with friends.
+        </p>
 
-        <form onSubmit={loginHandler}>
-          <input
-            disabled={isLoading}
-            type="text"
-            name="email"
-            placeholder="Email..."
-          />
-          <input
-            disabled={isLoading}
-            type="password"
-            name="password"
-            placeholder="Password..."
-          />
-          <button disabled={isLoading}>Sign in</button>
-        </form>
-      </div>
-      <div className="seperator" />
-      <div className="register">
-        <h2>Create an Account</h2>
-
-        <form onSubmit={registerHandler}>
-          <label htmlFor="file" id="profile">
-            <img src={profile.url || User} alt="" />
-            <span>Upload an image</span>
-            <input
-              type="file"
-              name="profile"
-              id="file"
-              onChange={imageHandler}
-              disabled={isLoading}
-            />
-          </label>
-
-          <input
-            disabled={isLoading}
-            type="text"
-            name="username"
-            placeholder="Username..."
-          />
-          <input
-            disabled={isLoading}
-            type="text"
-            name="email"
-            placeholder="Email..."
-          />
-          <input
-            disabled={isLoading}
-            type="password"
-            name="password"
-            placeholder="Password..."
-          />
-
-          <button disabled={isLoading}>Sign up</button>
-        </form>
+        <button
+          type="button"
+          className="google-login-btn"
+          disabled={isLoading}
+          onClick={googleLoginHandler}
+        >
+          <FcGoogle size={24} />
+          <span>{isLoading ? "Signing in..." : "Sign in with Google"}</span>
+        </button>
       </div>
     </div>
   );
 };
 
 export default Login;
+

@@ -1,16 +1,15 @@
 import { MdPhotoSizeSelectActual } from "react-icons/md";
 import { FaFaceSmileWink } from "react-icons/fa6";
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useSelector } from "react-redux";
 import { chatStpreType } from "../../redux/chatStore";
 import { CurrentUserType } from "../../redux/authSlice";
-import upload from "../../lib/upload";
-import { ProfileState } from "../Login";
 import { FaMicrophone } from "react-icons/fa";
+import { GLOBAL_CHAT_ID } from "../../redux/Thunk/Auth";
 
 interface EmojiType {
   emoji: string;
@@ -20,11 +19,6 @@ const Message = () => {
   const [text, setText] = useState("");
   const [emoji, setEmoji] = useState(false);
   const picker = useRef<HTMLButtonElement | null>(null);
-
-  const [img, setImg] = useState<ProfileState>({
-    file: null,
-    url: "",
-  });
 
   const chatInfo = useSelector(
     ({ chatStore }: { chatStore: chatStpreType }) => chatStore
@@ -37,14 +31,8 @@ const Message = () => {
     setText((prev) => prev + e.emoji);
   };
 
-  const imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      setImg({
-        file: files[0],
-        url: URL.createObjectURL(files[0]),
-      });
-    }
+  const handleUnsupportedMedia = () => {
+    toast.warning("Unsupported feature at the moment");
   };
 
   useEffect(() => {
@@ -62,49 +50,58 @@ const Message = () => {
   }, [emoji]);
 
   const handlerSubmit = async () => {
-    if (text === "") return;
+    if (text.trim() === "") return;
 
-    let imgUrl: string | null = null;
+    const messageText = text.trim();
+    setText("");
 
     try {
-      if (img.file) {
-        imgUrl = (await upload(img.file)) as string | null;
-      }
-
       if (chatInfo.chatId) {
         await updateDoc(doc(db, "chats", chatInfo.chatId), {
           messages: arrayUnion({
+            id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
             senderId: currentUser.id,
-            text,
+            senderName: currentUser.username,
+            senderAvatar: currentUser.avatar || null,
+            senderGender: currentUser.gender || "unspecified",
+            senderEmail: currentUser.email || "",
+            text: messageText,
             createdAt: new Date(),
-            ...(imgUrl && { img: imgUrl }),
+            seenBy: [],
           }),
         });
 
-        const userIDs = [currentUser.id, chatInfo.user?.id];
+        if (chatInfo.chatId !== GLOBAL_CHAT_ID) {
+          const userIDs = [currentUser.id, chatInfo.user?.id];
 
-        userIDs.forEach(async (id) => {
-          if (id) {
-            const usercChatRef = doc(db, "userchats", id);
-            const userChatsSnapshot = await getDoc(usercChatRef);
+          userIDs.forEach(async (id) => {
+            if (id) {
+              const usercChatRef = doc(db, "userchats", id);
+              const userChatsSnapshot = await getDoc(usercChatRef);
 
-            if (userChatsSnapshot.exists()) {
-              const userChatData = userChatsSnapshot.data();
-              const chatIndex = userChatData.chats.findIndex(
-                (c: chatStpreType) => c.chatId === chatInfo.chatId
-              );
+              if (userChatsSnapshot.exists()) {
+                const userChatData = userChatsSnapshot.data();
+                const chatIndex = userChatData.chats.findIndex(
+                  (c: chatStpreType) => c.chatId === chatInfo.chatId
+                );
 
-              userChatData.chats[chatIndex].lastMessage = text;
-              userChatData.chats[chatIndex].isSeen =
-                id == currentUser.id ? true : false;
-              userChatData.chats[chatIndex].updatedAt = Date.now();
+                if (chatIndex !== -1) {
+                  userChatData.chats[chatIndex].lastMessage = messageText;
+                  const isOwnChatDoc = id === currentUser.id;
+                  userChatData.chats[chatIndex].isSeen = isOwnChatDoc;
+                  userChatData.chats[chatIndex].unreadCount = isOwnChatDoc
+                    ? 0
+                    : (userChatData.chats[chatIndex].unreadCount || 0) + 1;
+                  userChatData.chats[chatIndex].updatedAt = Date.now();
 
-              await updateDoc(usercChatRef, {
-                chats: userChatData.chats,
-              });
+                  await updateDoc(usercChatRef, {
+                    chats: userChatData.chats,
+                  });
+                }
+              }
             }
-          }
-        });
+          });
+        }
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -112,31 +109,34 @@ const Message = () => {
         toast.error(error.message);
       }
     }
-
-    setImg({
-      file: null,
-      url: "",
-    });
-    setText("");
   };
 
-  const { isReciverBlocked } = useSelector(
+  const { isReciverBlocked, isCurrentUserBlocked, chatId } = useSelector(
     ({ chatStore }: { chatStore: chatStpreType }) => chatStore
   );
 
-  return (
-    <div className={`type-wrapper  ${isReciverBlocked ? "disabled" : ""}`}>
-      <label htmlFor="img">
-        <MdPhotoSizeSelectActual size={22} />
-        <input
-          type="file"
-          id="img"
-          style={{ display: "none" }}
-          onChange={imageHandler}
-        />
-      </label>
+  const isDisabled =
+    chatId !== GLOBAL_CHAT_ID && (isReciverBlocked || isCurrentUserBlocked);
 
-      <FaMicrophone size={22} />
+  return (
+    <div className={`type-wrapper ${isDisabled ? "disabled" : ""}`}>
+      <button
+        type="button"
+        className="unsupported-icon-btn"
+        onClick={handleUnsupportedMedia}
+        title="Unsupported feature at the moment"
+      >
+        <MdPhotoSizeSelectActual size={22} />
+      </button>
+
+      <button
+        type="button"
+        className="unsupported-icon-btn"
+        onClick={handleUnsupportedMedia}
+        title="Unsupported feature at the moment"
+      >
+        <FaMicrophone size={22} />
+      </button>
 
       <div className="inp-wrapper">
         <input
@@ -144,14 +144,17 @@ const Message = () => {
           type="text"
           value={text}
           id="msg-input"
-          disabled={isReciverBlocked}
-          placeholder="Type a message..."
+          disabled={isDisabled}
+          placeholder={
+            isDisabled
+              ? "You cannot send messages to this chat"
+              : "Type a message..."
+          }
           onKeyDown={(e) => (e.key == "Enter" ? handlerSubmit() : () => {})}
         />
-        {img.file && <img src={img.url} alt="" className="img-prew-box" />}
       </div>
 
-      <button className="icon-pick" ref={picker}>
+      <button type="button" className="icon-pick" ref={picker}>
         <FaFaceSmileWink size={22} onClick={() => setEmoji((prev) => !prev)} />
 
         <div className="picker">
@@ -164,7 +167,12 @@ const Message = () => {
         </div>
       </button>
 
-      <button className="icon-send-message" onClick={handlerSubmit}>
+      <button
+        type="button"
+        className="icon-send-message"
+        disabled={isDisabled}
+        onClick={handlerSubmit}
+      >
         Send
       </button>
     </div>
@@ -172,3 +180,4 @@ const Message = () => {
 };
 
 export default Message;
+

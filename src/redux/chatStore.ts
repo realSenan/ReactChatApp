@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CurrentUserType } from "./authSlice";
+import { GLOBAL_CHAT_ID } from "./Thunk/Auth";
 
 export interface chatStpreType {
   chatId: string | null;
@@ -8,15 +9,17 @@ export interface chatStpreType {
   isReciverBlocked: boolean;
   isContactClose: boolean;
   isDetailsClose: boolean;
+  profileModalUser: CurrentUserType | null;
 }
 
 const initialState: chatStpreType = {
-  chatId: null,
+  chatId: GLOBAL_CHAT_ID,
   user: null,
   isCurrentUserBlocked: false,
   isReciverBlocked: false,
   isContactClose: false,
   isDetailsClose: false,
+  profileModalUser: null,
 };
 
 const chatStore = createSlice({
@@ -26,16 +29,24 @@ const chatStore = createSlice({
     changeChat: (state, action) => {
       const { chatId, user, currentUser } = action.payload;
 
-      if (user.blocked.includes(currentUser?.id)) {
+      if (chatId === GLOBAL_CHAT_ID || !user) {
+        state.chatId = GLOBAL_CHAT_ID;
         state.user = null;
-        state.chatId = chatId;
-        state.isCurrentUserBlocked = !state.isCurrentUserBlocked;
+        state.isCurrentUserBlocked = false;
         state.isReciverBlocked = false;
-      } else if (currentUser?.blocked.includes(user.id)) {
+        return;
+      }
+
+      if (user.blocked?.includes(currentUser?.id)) {
+        state.user = user;
+        state.chatId = chatId;
+        state.isCurrentUserBlocked = true;
+        state.isReciverBlocked = false;
+      } else if (currentUser?.blocked?.includes(user.id)) {
         state.user = user;
         state.chatId = chatId;
         state.isCurrentUserBlocked = false;
-        state.isReciverBlocked = !state.isReciverBlocked;
+        state.isReciverBlocked = true;
       } else {
         state.user = user;
         state.chatId = chatId;
@@ -52,9 +63,18 @@ const chatStore = createSlice({
     closeDetails: (state) => {
       state.isDetailsClose = !state.isDetailsClose;
     },
+    setProfileModalUser: (state, action) => {
+      state.profileModalUser = action.payload;
+    },
   },
 });
 
-export const { changeChat, changeBlock, closeContact, closeDetails } =
-  chatStore.actions;
+export const {
+  changeChat,
+  changeBlock,
+  closeContact,
+  closeDetails,
+  setProfileModalUser,
+} = chatStore.actions;
 export default chatStore.reducer;
+

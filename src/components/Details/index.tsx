@@ -1,12 +1,8 @@
-import React, { useState } from "react";
 import DropDown from "./DropDown";
-import Photos from "./Photos";
-import { signOut } from "firebase/auth";
-import { auth, db } from "../../lib/firebase";
+import { db } from "../../lib/firebase";
 import { useDispatch, useSelector } from "react-redux";
-import { CurrentUserType, logOut } from "../../redux/authSlice";
+import { CurrentUserType } from "../../redux/authSlice";
 import { toast } from "react-toastify";
-import avatar from "../../assets/user.png";
 import {
   changeBlock,
   chatStpreType,
@@ -14,22 +10,12 @@ import {
 } from "../../redux/chatStore";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { RiEyeCloseFill } from "react-icons/ri";
-
-interface State {
-  chat: boolean;
-  privacy: boolean;
-  "shared-photos": boolean;
-  "shared-files": boolean;
-}
+import { FaGlobeAmericas } from "react-icons/fa";
+import { GLOBAL_CHAT_ID } from "../../redux/Thunk/Auth";
+import Avatar from "../Common/Avatar";
 
 const Details = () => {
   const dispatch = useDispatch();
-  const [state, setState] = useState<State>({
-    chat: false,
-    privacy: false,
-    "shared-photos": false,
-    "shared-files": false,
-  });
 
   const chatStore = useSelector(
     ({ chatStore }: { chatStore: chatStpreType }) => chatStore
@@ -38,6 +24,8 @@ const Details = () => {
   const { currentUser } = useSelector(
     ({ auth }: { auth: { currentUser: CurrentUserType } }) => auth
   );
+
+  const isGlobal = chatStore.chatId === GLOBAL_CHAT_ID;
 
   const handleBlock = async () => {
     if (!chatStore.user) return;
@@ -57,19 +45,8 @@ const Details = () => {
     }
   };
 
-  const clickHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const id = e.currentTarget.id;
-    setState((prev) => ({
-      ...prev,
-      [id]: !prev[id as keyof State],
-    }));
-  };
-
-  const logOutHandler = () => {
-    signOut(auth).then(() => {
-      dispatch(logOut());
-      toast.success("Logout success!");
-    });
+  const clickUnsupported = () => {
+    toast.warning("Unsupported feature at the moment");
   };
 
   const { isDetailsClose } = useSelector(
@@ -88,11 +65,26 @@ const Details = () => {
 
       <div>
         <figure className="sidebar-profile">
-          <img id="profile" src={chatStore.user?.avatar || avatar} alt="" />
+          {isGlobal ? (
+            <div className="global-avatar details-global-avatar">
+              <FaGlobeAmericas size={44} />
+            </div>
+          ) : (
+            <Avatar
+              id="profile"
+              src={chatStore.user?.avatar}
+              gender={chatStore.user?.gender}
+              alt={chatStore.user?.username || "User"}
+            />
+          )}
 
           <figcaption>
-            <h2>{chatStore.user?.username}</h2>
-            <h3>Here is a status...</h3>
+            <h2>{isGlobal ? "Global Chat" : chatStore.user?.username}</h2>
+            <h3>
+              {isGlobal
+                ? "Public Chat Room"
+                : chatStore.user?.email || "User"}
+            </h3>
           </figcaption>
         </figure>
 
@@ -100,50 +92,45 @@ const Details = () => {
           <DropDown
             id="chat"
             text="Chat Settings"
-            isActive={state.chat}
-            changeActive={clickHandler}
+            isActive={false}
+            changeActive={clickUnsupported}
           />
           <DropDown
             id="privacy"
             text="Privacy & help"
-            isActive={state.privacy}
-            changeActive={clickHandler}
+            isActive={false}
+            changeActive={clickUnsupported}
           />
           <DropDown
             id="shared-photos"
             text="Shared photos"
-            isActive={state["shared-photos"]}
-            changeActive={clickHandler}
-          >
-            {/* Something else  */}
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Photos key={i} />
-            ))}
-          </DropDown>
-
+            isActive={false}
+            changeActive={clickUnsupported}
+          />
           <DropDown
             id="shared-files"
             text="Shared files"
-            isActive={state["shared-files"]}
-            changeActive={clickHandler}
+            isActive={false}
+            changeActive={clickUnsupported}
           />
         </section>
       </div>
 
       <section className="detail-control">
-        <button className="block" onClick={handleBlock}>
-          {chatStore.isCurrentUserBlocked
-            ? "You are blocked"
-            : chatStore.isReciverBlocked
-            ? "User blocked"
-            : "Block user"}
-        </button>
-        <button onClick={logOutHandler} className="logout">
-          Logout
-        </button>
+        {!isGlobal && chatStore.user && (
+          <button className="block" onClick={handleBlock}>
+            {chatStore.isCurrentUserBlocked
+              ? "You are blocked"
+              : chatStore.isReciverBlocked
+              ? "Unblock User"
+              : "Block User"}
+          </button>
+        )}
       </section>
     </aside>
   );
 };
 
 export default Details;
+
+

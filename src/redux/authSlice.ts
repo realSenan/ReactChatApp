@@ -1,12 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { login } from "./Thunk/Auth";
 
+export interface FriendRequestType {
+  fromId: string;
+  fromName: string;
+  fromAvatar: string | null;
+  fromGender?: string;
+  createdAt: number;
+}
+
 export interface CurrentUserType {
   avatar: string | null;
-  blocked: Array<object>;
+  gender?: "male" | "female" | "unspecified" | string;
+  blocked: string[];
   email: string;
   id: string;
   username: string;
+  friends?: string[];
+  friendRequests?: FriendRequestType[];
+  sentRequests?: string[];
 }
 
 export interface AuthTypes {
@@ -26,6 +38,10 @@ const authSlice = createSlice({
     logOut: (state) => {
       state.currentUser = null;
     },
+    setUser: (state, action) => {
+      state.currentUser = action.payload;
+      state.isLoading = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -34,7 +50,7 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
-        if (action.payload) state.currentUser = action.payload;
+        state.currentUser = action.payload || null;
       })
       .addCase(login.rejected, (state) => {
         state.isLoading = false;
@@ -42,5 +58,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logOut } = authSlice.actions;
+export const { logOut, setUser } = authSlice.actions;
 export default authSlice.reducer;
+

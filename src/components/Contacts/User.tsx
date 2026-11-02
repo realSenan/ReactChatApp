@@ -1,23 +1,26 @@
-import React from "react";
-import userAvatar from "../../assets/user.png";
+import React, { useEffect } from "react";
 import { CurrentUserType } from "../../redux/authSlice";
-import { changeChat } from "../../redux/chatStore";
+import { changeChat, chatStpreType, closeContact } from "../../redux/chatStore";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
-
-export interface ChatDataType {
-  chatList: UserType[];
-  user: CurrentUserType;
-}
+import Avatar from "../Common/Avatar";
 
 export interface UserType {
   chatId: string;
   lastMessage: string;
   reciverId: string;
   isSeen: boolean;
-  updatedAd: number;
+  unreadCount?: number;
+  updatedAt?: number;
+  updatedAd?: number;
+}
+
+export interface ChatDataType {
+  chatItem: UserType;
+  chatList: UserType[];
+  user: CurrentUserType;
 }
 
 interface Props {
@@ -26,44 +29,61 @@ interface Props {
   index: number;
 }
 
-const User: React.FC<Props> = ({ user, chatData, index }) => {
+const User: React.FC<Props> = ({ user }) => {
   const dispatch = useDispatch();
-  const { avatar, username } = user.user;
-  const { lastMessage, chatId } = user.chatList[index];
+  const { avatar, username, gender } = user.user || {
+    avatar: null,
+    username: "User",
+    gender: "unspecified",
+  };
+  const { lastMessage, chatId, isSeen, unreadCount: rawUnread } = user.chatItem;
 
   const { currentUser } = useSelector(
     ({ auth }: { auth: { currentUser: CurrentUserType } }) => auth
   );
+  const { chatId: activeChatId, isContactClose } = useSelector(
+    ({ chatStore }: { chatStore: chatStpreType }) => chatStore
+  );
+
+  const isActive = activeChatId === chatId;
+  const unreadCount = rawUnread !== undefined ? rawUnread : !isSeen ? 1 : 0;
+
+  // If this chat is currently open and has unread messages, mark it as read automatically
+  useEffect(() => {
+    if (isActive && (!isSeen || unreadCount > 0) && currentUser?.id) {
+      const userChatRef = doc(db, "userchats", currentUser.id);
+      const updatedChats = user.chatList.map((item) =>
+        item.chatId === chatId
+          ? { ...item, isSeen: true, unreadCount: 0 }
+          : item
+      );
+      updateDoc(userChatRef, { chats: updatedChats }).catch(console.error);
+    }
+  }, [isActive, isSeen, unreadCount, currentUser?.id, chatId, user.chatList]);
 
   const handlerChat = async () => {
-    const onlyChatData: UserType[][] = chatData.map((item) => {
-      const { user, ...rest } = item;
-      user;
-      return rest.chatList;
-    });
+    dispatch(changeChat({ chatId, user: user.user, currentUser }));
+    if (window.innerWidth <= 925 && isContactClose) {
+      dispatch(closeContact());
+    }
 
-    const chatIndex = onlyChatData.findIndex((item) => {
-      return item[index].chatId == user.chatList[index].chatId;
-    });
+    if (!isSeen || unreadCount > 0) {
+      const userChatRef = doc(db, "userchats", currentUser.id);
+      const updatedChats = user.chatList.map((item) =>
+        item.chatId === chatId
+          ? { ...item, isSeen: true, unreadCount: 0 }
+          : item
+      );
 
-    chatData[chatIndex].chatList[index].isSeen = true;
-
-    const userChatRef = doc(db, "userchats", currentUser.id);
-
-    const newData = Object.values(user.chatList).flatMap(
-      (innerArray) => innerArray
-    );
-
-    try {
-      await updateDoc(userChatRef, {
-        chats: newData,
-      });
-
-      dispatch(changeChat({ chatId, user: user.user, currentUser }));
-    } catch (e) {
-      if (e instanceof Error) {
-        console.error(e.message);
-        toast.error(e.message);
+      try {
+        await updateDoc(userChatRef, {
+          chats: updatedChats,
+        });
+      } catch (e) {
+        if (e instanceof Error) {
+          console.error(e.message);
+          toast.error(e.message);
+        }
       }
     }
   };
@@ -71,16 +91,26 @@ const User: React.FC<Props> = ({ user, chatData, index }) => {
   return (
     <figure
       onClick={handlerChat}
-      className={`user-left-prev ${!user.chatList[index].isSeen ? "seen" : ""}`}
+      className={`user-left-prev ${isActive ? "active-chat" : ""} ${
+        !isActive && unreadCount > 0 ? "unread-chat" : ""
+      }`}
     >
-      <img src={avatar || userAvatar} alt="" />
+      <Avatar src={avatar} gender={gender} alt={username} />
 
-      <figcaption className="">
-        <h2 className="line-1-column">{username}</h2>
-        <h3 className="line-1-column">{lastMessage}</h3>
+      <figcaption className="contact-item-caption">
+        <div className="contact-item-top">
+          <h2 className="line-1-column">{username}</h2>
+          {!isActive && unreadCount > 0 && (
+            <span className="unread-badge">{unreadCount}</span>
+          )}
+        </div>
+        <h3 className="line-1-column">{lastMessage || "No messages yet"}</h3>
       </figcaption>
     </figure>
   );
 };
 
 export default User;
+
+
+
